@@ -7,6 +7,8 @@ const cors = require('@koa/cors');
 const creatSenhaRouter = require('../routes/generateQueuesNumbe');
 const createPrefRoute = require('../routes/prefSenhaQueuesNumber');
 const guicheRoute = require('../routes/guicheRoute');
+const newUserRoute = require('../routes/creatUserDataRoute');
+const creatCurrentCalling = require('../routes/callingPass');
 const url = 'mongodb://localhost:27017/Fila';
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -21,22 +23,22 @@ const server = http.createServer(app.callback());
 
 const wss = new WebSocket.Server({ server });
 
-
 const senhaRouter = creatSenhaRouter(wss);
 const prefRouter = createPrefRoute(wss);
-//prefRoute();
-//guicheRoute();
+const callingPass = creatCurrentCalling(wss);
 
 app.use(senhaRouter.routes()).use(senhaRouter.allowedMethods());
 app.use(prefRouter.routes()).use(prefRouter.allowedMethods());
 app.use(guicheRoute.routes()).use(guicheRoute.allowedMethods());
+app.use(newUserRoute.routes()).use(newUserRoute.allowedMethods());
+app.use(callingPass.routes()).use(callingPass.allowedMethods());
+
 
 wss.on('connection', (ws) => {
     console.log('New client connected');
 
     ws.on('message', async (message) => {
         console.log(`Received message: ${message}`);
-        // Handle WebSocket messages here...
     });
 
     ws.on('close', () => {

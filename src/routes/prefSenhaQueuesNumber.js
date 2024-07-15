@@ -50,6 +50,7 @@ module.exports = (wss) => {
             const senha = await Senha.find({});
             ctx.body = { status: 'Success', data: senha };
         } catch (err) {
+            console.log(err);
             ctx.status = 500;
             ctx.body = {status: 'error', message: 'internal Server Error'};
         }

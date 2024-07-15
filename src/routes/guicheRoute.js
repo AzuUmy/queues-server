@@ -7,7 +7,8 @@ router.get('/guiche', async (ctx) => {
         const collectionName = 'Guiche';
         const G = getGuicheModel(collectionName);
         const g = await G.find({});
-        ctx.body = { status: 'Success', data: g};
+        ctx.body = { status: 'Success', data: g };
+       
     }catch (err) {
         ctx.status = 500;
         ctx.body = {status: 'error', message: 'internal Server Error'};
@@ -15,5 +16,3 @@ router.get('/guiche', async (ctx) => {
 });
 
 module.exports = router;
-
-

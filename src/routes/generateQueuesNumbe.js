@@ -54,5 +54,34 @@ module.exports = (wss) => {
         }
     });
 
+    router.delete('/Pickedsenha/:senha', async (ctx) => {
+        const { senha } = ctx.params;
+    
+        try {
+            const collectionName = `senhas_${getCurrentDate()}`;
+            const Senha = getSenhaModel(collectionName);
+    
+            const deletedSenha = await Senha.findOneAndDelete({ senha: parseInt(senha) });
+    
+            if (deletedSenha) {
+                console.log('Deleted from MongoDB:', deletedSenha);
+                wss.clients.forEach(client => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({ type: 'Regular', status: 'success', data: deletedSenha }));
+                    }
+                });
+                ctx.body = { status: 'success', data: deletedSenha };
+            } else {
+                ctx.status = 404;
+                ctx.body = { status: 'error', message: 'Senha not found' };
+            }
+        } catch (err) {
+            console.error('Error deleting senha:', err);
+            ctx.status = 500;
+            ctx.body = { status: 'error', message: 'Server error' };
+        }
+    });
+
+
     return router;
 };
