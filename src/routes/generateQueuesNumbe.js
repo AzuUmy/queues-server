@@ -64,10 +64,9 @@ module.exports = (wss) => {
             const deletedSenha = await Senha.findOneAndDelete({ senha: parseInt(senha) });
     
             if (deletedSenha) {
-                console.log('Deleted from MongoDB:', deletedSenha);
                 wss.clients.forEach(client => {
                     if (client.readyState === WebSocket.OPEN) {
-                        client.send(JSON.stringify({ type: 'Regular', status: 'success', data: deletedSenha }));
+                        client.send(JSON.stringify({ type: 'Delete', status: 'success', data: deletedSenha }));
                     }
                 });
                 ctx.body = { status: 'success', data: deletedSenha };
