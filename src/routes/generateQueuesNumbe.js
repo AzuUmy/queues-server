@@ -66,10 +66,11 @@ module.exports = (wss) => {
             if (deletedSenha) {
                 wss.clients.forEach(client => {
                     if (client.readyState === WebSocket.OPEN) {
-                        client.send(JSON.stringify({ type: 'Delete', status: 'success', data: deletedSenha }));
+                        client.send(JSON.stringify({ type: 'DeleteRegular', status: 'success', data: deletedSenha }));
                     }
                 });
                 ctx.body = { status: 'success', data: deletedSenha };
+                console.log('deleting regular senha')
             } else {
                 ctx.status = 404;
                 ctx.body = { status: 'error', message: 'Senha not found' };

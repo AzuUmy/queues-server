@@ -1,6 +1,7 @@
 const WebSocket = require('ws');
 const getPrefModel = require('../schema/preferencialSenha');
 const Router = require('koa-router');
+const getPreferencialModel = require('../schema/preferencialSenha');
 
 
 const getCurrentDate = () => {
@@ -46,7 +47,7 @@ module.exports = (wss) => {
     router.get('/prefe', async (ctx) => {
         try {
             const collectionName = `preferencial_${getCurrentDate()}`;
-            const Senha = getPreferencialModel(collectionName);
+            const Senha = getPrefModel(collectionName);
             const senha = await Senha.find({});
             ctx.body = { status: 'Success', data: senha };
         } catch (err) {
@@ -54,6 +55,34 @@ module.exports = (wss) => {
             ctx.status = 500;
             ctx.body = {status: 'error', message: 'internal Server Error'};
         }
+    });
+
+    router.delete('/pickedPrefSenha/:senha', async (ctx) => {
+        const { senha } =  ctx.params;
+
+        try {
+          const  collectionName = `preferencial_${getCurrentDate()}`;
+          const Senha = getPreferencialModel(collectionName);
+
+          const deleteSenha = await Senha.findOneAndDelete({senha: parseInt(senha) });
+
+          if(deleteSenha){
+            
+            wss.clients.forEach(client => {
+                if(client.readyState === WebSocket.OPEN) {
+                    
+                    client.send(JSON.stringify({ type: 'DeletePref', status: 'success', data: deleteSenha }));
+                }
+            });
+            console.log('deleting pref senha')
+            ctx.body = {status: 'Sucess', data: deleteSenha};
+          }
+     } catch(error) {
+        console.log(error);
+        ctx.status = 404
+        ctx.body = {status: error};
+     }
+
     });
     
     return router;
