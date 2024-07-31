@@ -1,7 +1,6 @@
 const WebSocket = require('ws');
 const getPrefModel = require('../schema/preferencialSenha');
 const Router = require('koa-router');
-const getPreferencialModel = require('../schema/preferencialSenha');
 
 
 const getCurrentDate = () => {
@@ -62,7 +61,7 @@ module.exports = (wss) => {
 
         try {
           const  collectionName = `preferencial_${getCurrentDate()}`;
-          const Senha = getPreferencialModel(collectionName);
+          const Senha = getPrefModel(collectionName);
 
           const deleteSenha = await Senha.findOneAndDelete({senha: parseInt(senha) });
 

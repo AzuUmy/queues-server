@@ -7,18 +7,18 @@ module.exports = (wss) => {
 
     router.post('/calling', async (ctx) => {
 
-        const { guiche, senha, info, atendente } = ctx.request.body;
+        const { guiche, senha, info, atendente, callStart } = ctx.request.body;
         const collectionName = "currentCalling";
         const callingInfo = getCallingModel(collectionName);
 
         try{
-            const newCalling = new callingInfo({ guiche, senha, info, atendente });
-            await newCalling .save();
+            const newCalling = new callingInfo({ guiche, senha, info, atendente, callStart });
+            await newCalling.save();
             ctx.body = {status: 'succes', data: newCalling };
 
             wss.clients.forEach( clients => {
                     if(clients.readyState === WebSocket.OPEN) {
-                        clients.send(JSON.stringify({ type: 'Call', status: 'sucess', data: newCalling }));
+                        clients.send(JSON.stringify({ type: 'Call', status: 'success', data: newCalling }));
                     }
             });
         } catch (err){
@@ -34,7 +34,7 @@ module.exports = (wss) => {
             const collectionName = 'currentCalling';
             const currentCallingS = getCallingModel(collectionName);
             const currentCSenha = await currentCallingS.find({ atendente, guiche });
-            ctx.body = { status: 'Success', data: currentCSenha };
+            ctx.body = { status: 'success', data: currentCSenha };
         } catch (err){
             ctx.status = 500;
             ctx.body = {status: 'error', message: 'internal Server Error'};
@@ -83,8 +83,6 @@ module.exports = (wss) => {
         }
     });
 
-
     return router;
-     
 
 }

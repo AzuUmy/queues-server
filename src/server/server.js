@@ -10,6 +10,8 @@ const guicheRoute = require('../routes/guicheRoute');
 const newUserRoute = require('../routes/creatUserDataRoute');
 const creatCurrentCalling = require('../routes/callingPass');
 const setUserStatus = require('../routes/onlineUser');
+const SetUserOnCall = require('../routes/onCall');
+
 const url = 'mongodb://localhost:27017/Fila';
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -27,6 +29,7 @@ const senhaRouter = creatSenhaRouter(wss);
 const prefRouter = createPrefRoute(wss);
 const callingPass = creatCurrentCalling(wss);
 const userStatus = setUserStatus(wss);
+const setOnCall = SetUserOnCall(wss);
 
 app.use(senhaRouter.routes()).use(senhaRouter.allowedMethods());
 app.use(prefRouter.routes()).use(prefRouter.allowedMethods());
@@ -34,6 +37,7 @@ app.use(guicheRoute.routes()).use(guicheRoute.allowedMethods());
 app.use(newUserRoute.routes()).use(newUserRoute.allowedMethods());
 app.use(callingPass.routes()).use(callingPass.allowedMethods());
 app.use(userStatus.routes()).use(userStatus.allowedMethods());
+app.use(setOnCall.routes()).use(setOnCall.allowedMethods());
 
 
 wss.on('connection', (ws) => {

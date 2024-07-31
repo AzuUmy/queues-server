@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const callingSchema =  new mongoose.Schema({
+const OnCallingSchema =  new mongoose.Schema({
     guiche: { type: String, required: true },
     senha: { type: Number, required: true },
     info: { type: String, required: true },
@@ -9,9 +9,8 @@ const callingSchema =  new mongoose.Schema({
 });
 
 const getCallingModel = (collectionName) => {
-    return mongoose.model('Calling', callingSchema, collectionName);
+    return mongoose.model('OnCall', OnCallingSchema, collectionName);
 
 }
-
 
 module.exports = getCallingModel;
